@@ -11,7 +11,8 @@ function searchProduct(){
     $("#search-button").on('click', async function(){
         const query = $("#product-search").val().trim();
 
-        
+        $("#display-error").html('');
+
         if(!query || isNaN(query)){
             displayError("Please enter a valid number for price search.");
         } else {
@@ -24,7 +25,7 @@ function searchProduct(){
 
                 const products = await response.json();
 
-                console.log("Products returned:", products); // Debugging
+                console.log("Products returned:", products);
 
                 if(products.length === 0){
                     displayError("No Product Found.");
@@ -59,7 +60,7 @@ async function loadPaginatedProducts(page = 1){
         loadProducts(products);
 
     } catch (error) {
-        //console.error("Error paginating products", error);
+
     }
 }
 

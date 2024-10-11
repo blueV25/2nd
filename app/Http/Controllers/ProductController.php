@@ -13,8 +13,8 @@ class ProductController extends Controller
         $products = ProductModel::paginate(20);
 
 
-       return view('product', compact('products'));
-    }
+    return view('product', compact('products'));
+}
 
     public function searchByPrice(Request $request) {
         $query = $request->input("product-search");
@@ -69,7 +69,7 @@ class ProductController extends Controller
 
                     $left = $mid - 1;
                     while ($left >= 0) {
-                        $leftProductPrice = round((float)str_replace('$', '', $products[$left]['price']), 2);
+                        $leftProductPrice = round((float)str_replace('$', '', $products[$left]['price']), 3);
                         if ($leftProductPrice == $targetPrice) {
                             $results[] = $products[$left];
                             $left--;
@@ -80,8 +80,8 @@ class ProductController extends Controller
 
 
 
-               $right = $mid + 1;
-               while ($right < count($products)) {
+             $right = $mid + 1;
+              while ($right < count($products)) {
                    $rightProductPrice = round((float)str_replace('$', '', $products[$right]['price']), 2);
                    if ($rightProductPrice == $targetPrice) {
                        $results[] = $products[$right];
