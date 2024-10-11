@@ -19,26 +19,24 @@ class ProductController extends Controller
     public function searchByPrice(Request $request) {
         $query = $request->input("product-search");
 
-        // Validate query
         if (empty($query) || !is_numeric($query)) {
             return response()->json([]);
         }
 
-        // Cast query to float for comparison
         $query = (float)$query;
 
 
-        // Retrieve products sorted by price (removing the dollar sign)
         $products = ProductModel::orderByRaw('CAST(REPLACE(price, "$", "") AS DECIMAL(5, 3))')->get();
 
-        // Convert products to array for binary search
+
         $productsArray = $products->toArray();
 
-        // Perform binary search
+
         $searchResult = $this->binarySearchByPrice($productsArray, $query);
 
         return response()->json($searchResult);
     }
+
 
 
 
@@ -47,9 +45,9 @@ class ProductController extends Controller
         $high = count($products) - 1;
         $results = [];
 
-        // Check if targetPrice has decimals (specific price or whole number)
+        // Check if targetPrice kung naay bay point
         if (floor($targetPrice) == $targetPrice) {
-            // Whole number input, search within the range [targetPrice, targetPrice + 1)
+
             $lowerBound = floor($targetPrice);
             $upperBound = $lowerBound + 1;
         } else {
@@ -61,15 +59,14 @@ class ProductController extends Controller
         while ($low <= $high) {
             $mid = (int)(($low + $high) / 2);
 
-            // Get the product price as a float
             $productPrice = (float)str_replace('$', '', $products[$mid]['price']);
 
             if ($targetPrice == $lowerBound && $upperBound == $lowerBound) {
-                // If the input is an exact decimal, match exact product price
+
                 $productPrice = round($productPrice, 2);
                 if ($productPrice == $targetPrice) {
                     $results[] = $products[$mid];
-                    // Search left for more matching results
+
                     $left = $mid - 1;
                     while ($left >= 0) {
                         $leftProductPrice = round((float)str_replace('$', '', $products[$left]['price']), 2);
@@ -82,7 +79,7 @@ class ProductController extends Controller
                     }
 
 
-               // Search right for more matching results
+
                $right = $mid + 1;
                while ($right < count($products)) {
                    $rightProductPrice = round((float)str_replace('$', '', $products[$right]['price']), 2);
@@ -103,10 +100,10 @@ class ProductController extends Controller
 
  //******************************************************************************************************************* */
             } else {
-                // Whole number input: match products in the range [lowerBound, upperBound)
+                // Whole number input: match products in the range up and low bound !!!!!!!!!!!!!!!!!!!!
                 if ($productPrice >= $lowerBound && $productPrice < $upperBound) {
                     $results[] = $products[$mid];
-                    // Search left for more matching results
+                    //left search
                     $left = $mid - 1;
                     while ($left >= 0) {
                         $leftProductPrice = (float)str_replace('$', '', $products[$left]['price']);
@@ -117,7 +114,7 @@ class ProductController extends Controller
                             break;
                         }
                     }
-                    
+
                     // Search right for more matching results
                     $right = $mid + 1;
                     while ($right < count($products)) {
